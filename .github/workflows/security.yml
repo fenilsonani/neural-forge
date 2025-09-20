@@ -675,6 +675,7 @@ jobs:
           
       - name: Log security issues for failures
         if: contains(needs.*.result, 'failure')
+        run: |
           echo "🔒 Security Compliance Failure"
           echo "Date: $(date)"
           echo "Branch: ${{ github.ref_name }}"
