@@ -5,21 +5,6 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main]
-  schedule:
-    # Run performance benchmarks daily at 3 AM UTC
-    - cron: '0 3 * * *'
-  workflow_dispatch:
-    inputs:
-      benchmark_type:
-        description: 'Benchmark type to run'
-        required: true
-        default: 'comprehensive'
-        type: choice
-        options:
-          - quick
-          - comprehensive
-          - stress
-          - memory-profile
 
 env:
   PYTHONPATH: ${{ github.workspace }}/src
@@ -122,7 +107,7 @@ jobs:
         EOF
     
     - name: 📤 Upload performance report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: quick-performance-report
         path: quick-performance-report.md
@@ -333,7 +318,7 @@ jobs:
         "
     
     - name: 📤 Upload benchmark results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: benchmark-results-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
@@ -346,7 +331,7 @@ jobs:
     name: 🧠 Memory Profile Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    if: github.event_name == 'schedule' || github.event.inputs.benchmark_type == 'memory-profile'
+    if: github.ref == 'refs/heads/main'
     
     steps:
     - name: 📥 Checkout code
@@ -458,7 +443,7 @@ jobs:
         EOF
     
     - name: 📤 Upload memory report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: memory-profile-report
         path: memory-profile-report.md
@@ -469,7 +454,7 @@ jobs:
     name: 💪 Stress Testing
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    if: github.event_name == 'schedule' || github.event.inputs.benchmark_type == 'stress'
+    if: github.ref == 'refs/heads/main'
     
     steps:
     - name: 📥 Checkout code
@@ -561,7 +546,7 @@ jobs:
         EOF
     
     - name: 📤 Upload stress test report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: stress-test-report
         path: stress-test-report.md
@@ -577,7 +562,7 @@ jobs:
     
     steps:
     - name: 📥 Download all performance reports
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         path: performance-reports/
     
@@ -641,7 +626,7 @@ jobs:
         cat performance-summary.md
     
     - name: 📤 Upload performance summary
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: performance-summary
         path: performance-summary.md
