@@ -36,18 +36,18 @@ jobs:
 
     - name: Run basic tests
       run: |
-        # Create a simple test that will pass
-        python -c "
-import neural_arch
-print('✅ Basic import test passed')
+        cat > test_basic.py << 'EOF'
+        import neural_arch
+        print('✅ Basic import test passed')
 
-# Test core components exist
-from neural_arch.core import Tensor, Device, Module
-print('✅ Core components imported')
+        # Test core components exist
+        from neural_arch.core import Tensor, Device, Module
+        print('✅ Core components imported')
 
-# Create a simple tensor
-t = Tensor([1, 2, 3])
-print(f'✅ Created tensor with shape: {t.shape}')
+        # Create a simple tensor
+        t = Tensor([1, 2, 3])
+        print(f'✅ Created tensor with shape: {t.shape}')
 
-print('✅ All basic tests passed!')
-"
+        print('✅ All basic tests passed!')
+        EOF
+        python test_basic.py
