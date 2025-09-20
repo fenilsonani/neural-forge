@@ -15,7 +15,7 @@ import asyncio
 import json
 import logging
 import os
-import pickle
+import json
 import random
 import socket
 import threading
@@ -480,7 +480,7 @@ class MultiLevelCheckpointer:
         with self.lock:
             # Save checkpoint
             with open(checkpoint_path, 'wb') as f:
-                pickle.dump(checkpoint_data, f)
+                json.dump(checkpoint_data, f)
             
             # Update metadata
             self.checkpoint_metadata[checkpoint_id] = {
@@ -553,7 +553,7 @@ class MultiLevelCheckpointer:
             # Load checkpoint
             try:
                 with open(latest_meta['path'], 'rb') as f:
-                    checkpoint_data = pickle.load(f)
+                    checkpoint_data = json.load(f)
                 
                 # Verify consistency
                 stored_hash = checkpoint_data.pop('consistency_hash', None)

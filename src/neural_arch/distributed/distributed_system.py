@@ -14,7 +14,7 @@ import hashlib
 import json
 import logging
 import os
-import pickle
+import json
 import socket
 import threading
 import time
@@ -87,11 +87,11 @@ class TensorShard:
     def __post_init__(self):
         """Compute checksum for data integrity."""
         if self.checksum is None:
-            self.checksum = hashlib.md5(self.data.tobytes()).hexdigest()
+            self.checksum = hashlib.sha256(self.data.tobytes()).hexdigest()
     
     def verify_integrity(self) -> bool:
         """Verify data integrity using checksum."""
-        return hashlib.md5(self.data.tobytes()).hexdigest() == self.checksum
+        return hashlib.sha256(self.data.tobytes()).hexdigest() == self.checksum
 
 
 class CommunicationPrimitive:
@@ -549,8 +549,8 @@ class FaultTolerantCheckpointer:
                 continue
             
             try:
-                with open(path, 'rb') as f:
-                    checkpoint_data = pickle.load(f)
+                with open(path, 'r') as f:
+                    checkpoint_data = json.load(f)
                 
                 # Verify checksum
                 expected_checksum = checkpoint_data.pop('checksum')
@@ -581,8 +581,8 @@ class FaultTolerantCheckpointer:
     async def _verify_checkpoint(self, path: str, expected_checksum: str) -> bool:
         """Verify checkpoint integrity."""
         try:
-            with open(path, 'rb') as f:
-                data = pickle.load(f)
+            with open(path, 'r') as f:
+                data = json.load(f)
             
             actual_checksum = data.get('checksum')
             return actual_checksum == expected_checksum

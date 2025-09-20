@@ -166,6 +166,12 @@ def download_file(url: str, destination: Path, chunk_size: int = 8192, timeout: 
     logger.info(f"Downloading from {url}")
 
     try:
+        # Validate URL scheme for security
+        from urllib.parse import urlparse
+        parsed_url = urlparse(url)
+        if parsed_url.scheme not in ['http', 'https']:
+            raise ValueError(f"Only HTTP/HTTPS URLs allowed, got: {parsed_url.scheme}")
+
         req = Request(url, headers={"User-Agent": "neural-arch/1.0"})
         with urlopen(req, timeout=timeout) as response:
             total_size = int(response.headers.get("Content-Length", 0))
