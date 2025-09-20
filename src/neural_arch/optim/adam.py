@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 import numpy as np
 
-from ..core.base import Optimizer, Parameter
+from ..core import Optimizer, Parameter
 from ..exceptions import OptimizerError, handle_exception
 
 logger = logging.getLogger(__name__)

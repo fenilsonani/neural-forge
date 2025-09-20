@@ -7,7 +7,7 @@ import numpy as np
 
 from ..core import Parameter, Tensor
 from .module import Module
-from ..core.tensor import GradientFunction
+from ..core import GradientFunction
 from ..exceptions import LayerError, handle_exception
 from ..functional import add, matmul, sigmoid, tanh
 

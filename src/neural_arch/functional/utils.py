@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 import numpy as np
 
-from ..core.tensor import Shape, Tensor
+from ..core import Shape, Tensor
 
 logger = logging.getLogger(__name__)
 

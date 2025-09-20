@@ -222,7 +222,7 @@ class OptimizedLinear(Module):
                     bias_grad = np.sum(local_grad, axis=0)
                     self.bias.backward(bias_grad)
 
-            from ..core.tensor import GradientFunction
+            from ..core import GradientFunction
 
             result._grad_fn = GradientFunction(backward_fn, [x, self.weight], "fused_linear")
 
@@ -290,7 +290,7 @@ class OptimizedLinear(Module):
                     bias_grad = np.sum(local_grad, axis=0)
                     self.bias.backward(bias_grad)
 
-            from ..core.tensor import GradientFunction
+            from ..core import GradientFunction
 
             result._grad_fn = GradientFunction(backward_fn, [x, self.weight], "jit_linear")
 
@@ -359,7 +359,7 @@ class OptimizedGELU(Module):
 
                         x.backward(grad_output * activation_grad)
 
-                    from ..core.tensor import GradientFunction
+                    from ..core import GradientFunction
 
                     result._grad_fn = GradientFunction(backward_fn, [x], "jit_gelu")
 

@@ -11,9 +11,9 @@ from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
-from ..core.device import Device, DeviceType
-from ..core.tensor import Tensor
-from ..core.base import Module
+from ..core import Device, DeviceType
+from ..core import Tensor
+from ..core import Module
 from .communication import (
     ReduceOp,
     all_gather,

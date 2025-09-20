@@ -16,8 +16,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-from ..core.device import Device, DeviceType
-from ..core.tensor import Tensor
+from ..core import Device, DeviceType
+from ..core import Tensor
 
 logger = logging.getLogger(__name__)
 

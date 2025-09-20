@@ -4,7 +4,7 @@ import logging
 
 import numpy as np
 
-from ..core.tensor import GradientFunction, Tensor
+from ..core import GradientFunction, Tensor
 from .activation import softmax
 from .utils import memory_efficient_operation
 

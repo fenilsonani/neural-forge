@@ -4,7 +4,7 @@ import logging
 
 import numpy as np
 
-from ..core.tensor import GradientFunction, Tensor
+from ..core import GradientFunction, Tensor
 from .utils import memory_efficient_operation
 
 logger = logging.getLogger(__name__)

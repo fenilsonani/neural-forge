@@ -17,7 +17,7 @@ from dataclasses import dataclass, asdict
 
 import numpy as np
 
-from ..core.tensor import Tensor
+from ..core import Tensor
 from ..nn.module import Module
 from .communication import (
     all_reduce, all_gather, broadcast, barrier,

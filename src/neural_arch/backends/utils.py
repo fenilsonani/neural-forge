@@ -92,7 +92,7 @@ def get_backend_for_device(device: str) -> str:
 
 def print_available_devices():
     """Print information about available compute devices."""
-    from ..core.device import get_device_capabilities
+    from ..core import get_device_capabilities
 
     print("Available Compute Devices:")
     print("-" * 50)

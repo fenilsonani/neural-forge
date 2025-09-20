@@ -15,7 +15,7 @@ from typing import Any, Dict, Optional, Type, Union
 
 import numpy as np
 
-from ..core.base import Optimizer
+from ..core import Optimizer
 from ..core.tensor import Tensor
 from ..exceptions import OptimizerError
 from .grad_scaler import AdvancedGradScaler, ScalerConfig

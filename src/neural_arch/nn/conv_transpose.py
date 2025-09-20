@@ -6,7 +6,7 @@ from typing import Optional, Tuple, Union
 import numpy as np
 
 from ..core import Module, Parameter, Tensor
-from ..core.tensor import GradientFunction
+from ..core import GradientFunction
 from ..exceptions import LayerError, handle_exception
 from ..functional import add
 

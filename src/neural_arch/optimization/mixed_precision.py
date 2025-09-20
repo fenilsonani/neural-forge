@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, Callable
 
 import numpy as np
 
-from ..core.base import Module, Parameter
+from ..core import Module, Parameter
 from ..core.tensor import Tensor
 from ..exceptions import NumericalError
 

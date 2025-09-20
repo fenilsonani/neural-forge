@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, Iterator, List, Optional
 
-from ..core.tensor import Tensor
+from ..core import Tensor
 
 
 class Module:

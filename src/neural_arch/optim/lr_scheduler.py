@@ -10,7 +10,7 @@ from typing import Callable, List, Optional, Union
 
 import numpy as np
 
-from ..core.base import Optimizer
+from ..core import Optimizer
 from ..exceptions import OptimizerError
 
 logger = logging.getLogger(__name__)

@@ -5,7 +5,7 @@ from typing import Union
 
 import numpy as np
 
-from ..core.tensor import GradientFunction, Tensor, TensorLike
+from ..core import GradientFunction, Tensor, TensorLike
 from .utils import broadcast_tensors, reduce_gradient
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ def add(a: TensorLike, b: TensorLike) -> Tensor:
     result_np = backend.to_numpy(result_data)
 
     # Check global gradient state and input tensors
-    from ..core.tensor import is_grad_enabled
+    from ..core import is_grad_enabled
 
     requires_grad = is_grad_enabled() and (a.requires_grad or b.requires_grad)
     result = Tensor(
