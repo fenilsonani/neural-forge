@@ -243,10 +243,11 @@ profiling/
 
 # Debugging
 *.dmp
-core
+# core  # Commented out to allow src/neural_arch/core/
 core.*
 *.stackdump
 *.core
+!src/neural_arch/core/  # Explicitly allow neural_arch core module
 
 # Package managers
 poetry.lock
