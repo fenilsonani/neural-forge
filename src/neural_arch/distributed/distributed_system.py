@@ -515,7 +515,7 @@ class FaultTolerantCheckpointer:
             
             try:
                 with open(path, 'wb') as f:
-                    pickle.dump(checkpoint_data, f)
+                    json.dump(checkpoint_data, f)
                 paths.append(path)
                 
                 # Verify saved checkpoint
@@ -575,7 +575,7 @@ class FaultTolerantCheckpointer:
     def _compute_checksum(self, data: Dict[str, Any]) -> str:
         """Compute checksum for checkpoint data."""
         # Serialize data for checksum computation
-        serialized = pickle.dumps(data)
+        serialized = json.dumps(data).encode()
         return hashlib.sha256(serialized).hexdigest()
     
     async def _verify_checkpoint(self, path: str, expected_checksum: str) -> bool:
