@@ -96,9 +96,8 @@ class Tensor:
         self._grad_fn = None
         self.name = name
 
-        # Backend compatibility
-        from ..backends.backend import Backend
-        self.backend = Backend.get_backend(self.device.type)
+        # Backend compatibility (simplified)
+        self.backend = None  # Simplified - no backend needed
         self.backend_data = self.data  # For now, just use numpy
 
     def __str__(self):

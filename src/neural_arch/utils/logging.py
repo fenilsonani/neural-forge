@@ -282,6 +282,8 @@ def get_performance_logger(name: str = 'neural_forge') -> PerformanceLogger:
 
 
 # Context managers for logging operations
+from contextlib import contextmanager
+
 @contextmanager
 def log_operation(operation_name: str, logger: Optional[logging.Logger] = None, **kwargs):
     """Context manager for logging operations with timing"""
