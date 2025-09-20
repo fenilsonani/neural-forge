@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, Union
 
-from .config import Config
+from .defaults import Config
 
 
 class ConfigValidator:

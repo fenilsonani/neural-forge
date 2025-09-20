@@ -1,6 +1,14 @@
 """Default configuration presets for different environments."""
 
-from .config import Config
+# Simple Config class for compatibility
+class Config:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+
+    def update(self, **kwargs):
+        new_config = Config(**self.__dict__)
+        new_config.__dict__.update(kwargs)
+        return new_config
 
 # Default configuration for general use
 DEFAULT_CONFIG = Config(
