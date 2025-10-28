@@ -21,10 +21,10 @@ jobs:
     
     steps:
     - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     
     - name: 🐍 Setup Python 3.11
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: '3.11'
         cache: 'pip'
@@ -107,7 +107,7 @@ jobs:
         EOF
     
     - name: 📤 Upload performance report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: quick-performance-report
         path: quick-performance-report.md
@@ -132,10 +132,10 @@ jobs:
     
     steps:
     - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     
     - name: 🐍 Setup Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
@@ -318,7 +318,7 @@ jobs:
         "
     
     - name: 📤 Upload benchmark results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: benchmark-results-${{ matrix.os }}-${{ matrix.python-version }}
         path: |
@@ -335,10 +335,10 @@ jobs:
     
     steps:
     - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     
     - name: 🐍 Setup Python 3.11
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: '3.11'
         cache: 'pip'
@@ -443,7 +443,7 @@ jobs:
         EOF
     
     - name: 📤 Upload memory report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: memory-profile-report
         path: memory-profile-report.md
@@ -458,10 +458,10 @@ jobs:
     
     steps:
     - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     
     - name: 🐍 Setup Python 3.11
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: '3.11'
         cache: 'pip'
@@ -546,7 +546,7 @@ jobs:
         EOF
     
     - name: 📤 Upload stress test report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: stress-test-report
         path: stress-test-report.md
@@ -562,7 +562,7 @@ jobs:
     
     steps:
     - name: 📥 Download all performance reports
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         path: performance-reports/
     
@@ -626,7 +626,7 @@ jobs:
         cat performance-summary.md
     
     - name: 📤 Upload performance summary
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: performance-summary
         path: performance-summary.md
