@@ -8,8 +8,6 @@ This module provides comprehensive quantization techniques for neural networks:
 - Calibration and optimization
 """
 
-import os
-import sys
 import time
 import logging
 from abc import ABC, abstractmethod
@@ -19,12 +17,8 @@ from enum import Enum
 
 import numpy as np
 
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-
-from neural_arch.core.tensor import Tensor
-from neural_arch.nn.module import Module
-from neural_arch.nn.linear import Linear
+from ..core import Tensor
+from ..nn import Module, Linear
 
 logger = logging.getLogger(__name__)
 

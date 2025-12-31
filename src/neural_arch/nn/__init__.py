@@ -42,6 +42,8 @@ from .positional import (
     create_rope,
 )
 from .transformer import TransformerBlock, TransformerDecoderBlock, TransformerEncoder
+from .differential_attention import DifferentialAttention, DifferentialTransformerBlock, DifferentialTransformer
+from .modern_attention import GroupedQueryAttention, MultiQueryAttention
 
 # Import standard linear as fallback
 try:
@@ -89,6 +91,12 @@ __all__ = [
     # Attention layers
     "MultiHeadAttention",
     "SelfAttention",
+    # Modern attention mechanisms
+    "DifferentialAttention",
+    "DifferentialTransformerBlock",
+    "DifferentialTransformer",
+    "GroupedQueryAttention",
+    "MultiQueryAttention",
     # Transformer components
     "TransformerBlock",
     "TransformerEncoder",

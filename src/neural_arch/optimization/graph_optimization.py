@@ -11,7 +11,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 import numpy as np
 
-from ..core.tensor import Tensor
+from ..core import Tensor
 from ..functional import add, matmul, mul
 
 logger = logging.getLogger(__name__)

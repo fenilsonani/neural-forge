@@ -42,6 +42,26 @@ try:
 except ImportError:
     _ADVANCED_SCALER_AVAILABLE = False
 
+# Import gradient checkpointing
+try:
+    from .gradient_checkpointing import (
+        CheckpointFunction,
+        GradientCheckpointManager,
+        get_checkpoint_manager,
+        checkpoint_scope,
+        checkpoint,
+        SequentialCheckpoint,
+        memory_efficient_attention,
+        CheckpointedTransformerLayer,
+        estimate_memory_savings,
+        checkpoint_sequential,
+        no_checkpoint,
+        force_checkpoint,
+    )
+    _GRADIENT_CHECKPOINTING_AVAILABLE = True
+except ImportError:
+    _GRADIENT_CHECKPOINTING_AVAILABLE = False
+
 # Import AMP optimizer if available
 try:
     from .amp_optimizer import (
@@ -100,4 +120,21 @@ if _AMP_OPTIMIZER_AVAILABLE:
         "create_amp_adamw",
         "create_amp_sgd",
         "get_recommended_scaler_config",
+    ])
+
+# Add gradient checkpointing exports if available
+if _GRADIENT_CHECKPOINTING_AVAILABLE:
+    __all__.extend([
+        "CheckpointFunction",
+        "GradientCheckpointManager",
+        "get_checkpoint_manager",
+        "checkpoint_scope",
+        "checkpoint",
+        "SequentialCheckpoint",
+        "memory_efficient_attention",
+        "CheckpointedTransformerLayer",
+        "estimate_memory_savings",
+        "checkpoint_sequential",
+        "no_checkpoint",
+        "force_checkpoint",
     ])

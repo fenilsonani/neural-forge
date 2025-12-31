@@ -3,14 +3,10 @@
 This module provides tools for visualizing neural network architectures,
 computational graphs, and layer details with professional diagrams.
 """
+from __future__ import annotations
 
-import os
-import sys
 from typing import Dict, List, Optional, Tuple, Any, Union
 import numpy as np
-
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 try:
     import matplotlib.pyplot as plt
@@ -32,9 +28,9 @@ except ImportError:
     PLOTLY_AVAILABLE = False
     go = None
 
-from neural_arch.nn import Module, Sequential, Linear, Conv1d, Conv2d, Conv3d
-from neural_arch.nn import RNN, LSTM, GRU, MultiHeadAttention, TransformerBlock
-from neural_arch.nn import ReLU, Sigmoid, Tanh, GELU, Softmax, Dropout, LayerNorm
+from ..nn import Module, Sequential, Linear, Conv1d, Conv2d, Conv3d
+from ..nn import RNN, LSTM, GRU, MultiHeadAttention, TransformerBlock
+from ..nn import ReLU, Sigmoid, Tanh, GELU, Softmax, Dropout, LayerNorm
 
 
 class ModelVisualizer:

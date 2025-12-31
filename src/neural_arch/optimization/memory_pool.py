@@ -21,9 +21,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 import numpy as np
 
-from ..core.device import Device, DeviceType
-from ..core.dtype import DType
-from ..core.tensor import Tensor
+from ..core import Device, DeviceType, DType, Tensor
 
 logger = logging.getLogger(__name__)
 
@@ -483,9 +481,7 @@ def create_tensor_with_pooling(data, requires_grad=False, dtype=None, device=Non
     This is a helper function that can be used to create tensors with memory pooling.
     In a full implementation, this would be integrated into the Tensor constructor.
     """
-    from ..core.device import get_default_device
-    from ..core.dtype import get_default_dtype
-    from ..core.tensor import Tensor
+    from ..core import get_default_device, get_default_dtype, Tensor
 
     # Set defaults
     device = device or get_default_device()

@@ -3,15 +3,11 @@
 This module provides comprehensive visualization tools for training metrics,
 loss curves, performance analysis, and training progress monitoring.
 """
+from __future__ import annotations
 
-import os
-import sys
 from typing import Dict, List, Optional, Tuple, Any, Union
 import numpy as np
 from pathlib import Path
-
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 try:
     import matplotlib.pyplot as plt
@@ -384,16 +380,33 @@ def plot_training_curves(train_loss: List[float], val_loss: Optional[List[float]
     return visualizer.plot_training_curves()
 
 
-def plot_loss_history(loss_history: Dict[str, List[float]], 
+def plot_loss_history(loss_history: Dict[str, List[float]],
                      save_path: Optional[str] = None) -> Optional[plt.Figure]:
-    """Plot loss history with train/validation comparison."""
+    """Plot loss history with train/validation comparison.
+
+    Args:
+        loss_history: Dictionary with loss values. Accepts keys like:
+            - 'train', 'train_loss', 'training_loss' for training loss
+            - 'val', 'val_loss', 'validation_loss' for validation loss
+        save_path: Optional path to save the figure
+    """
     if not MATPLOTLIB_AVAILABLE:
         return None
-    
+
+    # Flexible key matching for train loss
+    train_loss = (loss_history.get('train') or
+                  loss_history.get('train_loss') or
+                  loss_history.get('training_loss') or [])
+
+    # Flexible key matching for validation loss
+    val_loss = (loss_history.get('val') or
+                loss_history.get('val_loss') or
+                loss_history.get('validation_loss'))
+
     visualizer = TrainingVisualizer()
     return visualizer.plot_loss_comparison(
-        train_loss=loss_history.get('train', []),
-        val_loss=loss_history.get('val'),
+        train_loss=train_loss,
+        val_loss=val_loss,
         save_path=save_path
     )
 

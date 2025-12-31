@@ -3,14 +3,10 @@
 This module provides tools for visualizing feature maps, activations,
 attention weights, and weight distributions in neural networks.
 """
+from __future__ import annotations
 
-import os
-import sys
 from typing import Dict, List, Optional, Tuple, Any, Union
 import numpy as np
-
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 try:
     import matplotlib.pyplot as plt
@@ -32,8 +28,8 @@ except ImportError:
     PLOTLY_AVAILABLE = False
     go = None
 
-from neural_arch.core import Tensor
-from neural_arch.nn import Module
+from ..core import Tensor
+from ..nn import Module
 
 
 class FeatureVisualizer:
@@ -129,24 +125,76 @@ class FeatureVisualizer:
         
         return fig
     
-    def plot_activations(self, activations: Union[Tensor, np.ndarray], 
+    def plot_activations(self, activations: Union[Tensor, np.ndarray, Dict[str, Any]],
                         layer_name: str = "Layer", activation_type: str = "histogram",
                         save_path: Optional[str] = None) -> Optional[plt.Figure]:
         """Visualize activation distributions and patterns.
-        
+
         Args:
-            activations: Activation tensor
-            layer_name: Name of the layer
+            activations: Activation tensor, numpy array, or dict of {layer_name: activations}
+            layer_name: Name of the layer (used when activations is a single array)
             activation_type: Type of visualization ('histogram', 'distribution', 'heatmap')
             save_path: Path to save the figure
-            
+
         Returns:
             matplotlib Figure object or None
         """
         if not MATPLOTLIB_AVAILABLE:
             return None
-        
-        # Convert to numpy if needed
+
+        # Handle dict input - plot histograms for multiple layers
+        if isinstance(activations, dict):
+            n_layers = len(activations)
+            if n_layers == 0:
+                return None
+
+            n_cols = min(3, n_layers)
+            n_rows = (n_layers + n_cols - 1) // n_cols
+
+            fig, axes = plt.subplots(n_rows, n_cols, figsize=(5 * n_cols, 4 * n_rows))
+            if n_layers == 1:
+                axes = [axes]
+            else:
+                axes = axes.flatten() if hasattr(axes, 'flatten') else [axes]
+
+            for i, (name, acts) in enumerate(activations.items()):
+                if i >= len(axes):
+                    break
+                ax = axes[i]
+
+                # Convert to numpy if needed
+                if isinstance(acts, Tensor):
+                    data = acts.data.flatten()
+                elif hasattr(acts, 'flatten'):
+                    data = acts.flatten()
+                else:
+                    data = np.array(acts).flatten()
+
+                ax.hist(data, bins=50, alpha=0.7, color='skyblue', edgecolor='black')
+                ax.set_title(name)
+                ax.set_xlabel('Activation Value')
+                ax.set_ylabel('Frequency')
+                ax.grid(True, alpha=0.3)
+
+                # Add stats
+                stats_text = f"μ={np.mean(data):.3f}, σ={np.std(data):.3f}"
+                ax.text(0.95, 0.95, stats_text, transform=ax.transAxes,
+                       ha='right', va='top', fontsize=8,
+                       bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+
+            # Hide unused subplots
+            for j in range(i + 1, len(axes)):
+                axes[j].axis('off')
+
+            plt.suptitle('Activation Distributions', fontsize=14, fontweight='bold')
+            plt.tight_layout()
+
+            if save_path:
+                plt.savefig(save_path, dpi=300, bbox_inches='tight')
+
+            return fig
+
+        # Convert single array to numpy if needed
         if isinstance(activations, Tensor):
             data = activations.data.flatten()
         else:
@@ -291,45 +339,77 @@ class FeatureVisualizer:
         
         return fig
     
-    def plot_weight_distributions(self, model: Module, layer_types: Optional[List[str]] = None,
+    def plot_weight_distributions(self, model_or_weights: Union[Module, Dict[str, Any]],
+                                layer_types: Optional[List[str]] = None,
                                 save_path: Optional[str] = None) -> Optional[plt.Figure]:
         """Plot weight distributions across different layers.
-        
+
         Args:
-            model: Neural network model
-            layer_types: Types of layers to include (None for all)
+            model_or_weights: Neural network model OR dict of {name: weights_array}
+            layer_types: Types of layers to include (None for all) - only used with Module
             save_path: Path to save the figure
-            
+
         Returns:
             matplotlib Figure object or None
         """
         if not MATPLOTLIB_AVAILABLE:
             return None
-        
-        # Collect weights from model
+
+        # Collect weights from model or use provided dict
         layer_weights = {}
-        
-        def collect_weights(module, prefix=""):
-            for name, child in module.named_children():
-                full_name = f"{prefix}.{name}" if prefix else name
-                
-                # Check if this layer type should be included
-                if layer_types is not None:
-                    if not any(layer_type.lower() in type(child).__name__.lower() 
-                             for layer_type in layer_types):
-                        continue
-                
-                # Collect weights
-                if hasattr(child, 'weight') and child.weight is not None:
-                    layer_weights[f"{full_name}_weight"] = child.weight.data.flatten()
-                
-                if hasattr(child, 'bias') and child.bias is not None:
-                    layer_weights[f"{full_name}_bias"] = child.bias.data.flatten()
-                
-                # Recurse into child modules
-                collect_weights(child, full_name)
-        
-        collect_weights(model)
+
+        if isinstance(model_or_weights, dict):
+            # Direct dict of weights provided
+            for name, weights in model_or_weights.items():
+                if hasattr(weights, 'flatten'):
+                    layer_weights[name] = weights.flatten()
+                elif hasattr(weights, 'data'):
+                    layer_weights[name] = weights.data.flatten()
+                else:
+                    layer_weights[name] = np.array(weights).flatten()
+        else:
+            # Model provided - extract weights
+            model = model_or_weights
+
+            def collect_weights(module, prefix=""):
+                # Handle Sequential and ModuleList
+                if hasattr(module, '_modules_list'):
+                    for i, child in enumerate(module._modules_list):
+                        full_name = f"{prefix}.{i}" if prefix else str(i)
+
+                        # Collect weights from this layer
+                        if hasattr(child, 'weight') and child.weight is not None:
+                            weight_data = child.weight.data if hasattr(child.weight, 'data') else child.weight
+                            layer_weights[f"{full_name}_{child.__class__.__name__}_weight"] = np.array(weight_data).flatten()
+
+                        if hasattr(child, 'bias') and child.bias is not None:
+                            bias_data = child.bias.data if hasattr(child.bias, 'data') else child.bias
+                            layer_weights[f"{full_name}_{child.__class__.__name__}_bias"] = np.array(bias_data).flatten()
+
+                        # Recurse
+                        collect_weights(child, full_name)
+
+                # Handle modules with named_children
+                elif hasattr(module, 'named_children'):
+                    for name, child in module.named_children():
+                        full_name = f"{prefix}.{name}" if prefix else name
+
+                        if layer_types is not None:
+                            if not any(layer_type.lower() in type(child).__name__.lower()
+                                     for layer_type in layer_types):
+                                continue
+
+                        if hasattr(child, 'weight') and child.weight is not None:
+                            weight_data = child.weight.data if hasattr(child.weight, 'data') else child.weight
+                            layer_weights[f"{full_name}_weight"] = np.array(weight_data).flatten()
+
+                        if hasattr(child, 'bias') and child.bias is not None:
+                            bias_data = child.bias.data if hasattr(child.bias, 'data') else child.bias
+                            layer_weights[f"{full_name}_bias"] = np.array(bias_data).flatten()
+
+                        collect_weights(child, full_name)
+
+            collect_weights(model)
         
         if not layer_weights:
             print("No weights found in the model")
@@ -474,11 +554,18 @@ def visualize_attention_weights(attention_weights: Union[Tensor, np.ndarray],
     return visualizer.visualize_attention_weights(attention_weights, head_idx, save_path=save_path)
 
 
-def plot_weight_distributions(model: Module, layer_types: Optional[List[str]] = None,
+def plot_weight_distributions(model_or_weights: Union[Module, Dict[str, Any]],
+                             layer_types: Optional[List[str]] = None,
                              save_path: Optional[str] = None) -> Optional[plt.Figure]:
-    """Convenience function to plot weight distributions."""
+    """Convenience function to plot weight distributions.
+
+    Args:
+        model_or_weights: Neural network model OR dict of {name: weights_array}
+        layer_types: Types of layers to include (None for all)
+        save_path: Path to save the figure
+    """
     visualizer = FeatureVisualizer()
-    return visualizer.plot_weight_distributions(model, layer_types, save_path)
+    return visualizer.plot_weight_distributions(model_or_weights, layer_types, save_path)
 
 
 # Example usage

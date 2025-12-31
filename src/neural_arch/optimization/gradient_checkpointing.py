@@ -18,8 +18,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from ..core.device import Device
-from ..core.tensor import GradientFunction, Tensor, no_grad
+from ..core import Device, GradientFunction, Tensor, no_grad
 
 logger = logging.getLogger(__name__)
 

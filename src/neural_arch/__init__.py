@@ -75,6 +75,11 @@ from .nn import (
     Softmax,
     Tanh,
     TransformerBlock,
+    # Modern attention mechanisms
+    DifferentialAttention,
+    DifferentialTransformer,
+    GroupedQueryAttention,
+    MultiQueryAttention,
 )
 
 # Optimizers
@@ -90,6 +95,44 @@ try:
 except ImportError:
     # Optimization config not available
     _optimization_config_available = False
+
+# Import gradient checkpointing
+try:
+    from .optimization import (
+        checkpoint,
+        checkpoint_sequential,
+        get_checkpoint_manager,
+    )
+    _gradient_checkpointing_available = True
+except ImportError:
+    _gradient_checkpointing_available = False
+
+# Import visualization module
+try:
+    from .visualization import (
+        # Architecture visualization
+        ModelVisualizer,
+        plot_model_architecture,
+        plot_computational_graph,
+        # Training visualization
+        TrainingVisualizer,
+        plot_training_curves,
+        plot_loss_history,
+        # Feature visualization
+        FeatureVisualizer,
+        plot_feature_maps,
+        plot_activations,
+        visualize_attention_weights,
+        # Performance visualization
+        PerformanceVisualizer,
+        plot_benchmark_results,
+        # Interactive visualization
+        InteractiveVisualizer,
+        create_streamlit_dashboard,
+    )
+    _visualization_available = True
+except ImportError:
+    _visualization_available = False
 
 # CLI
 from .cli import main as cli_main
@@ -143,6 +186,30 @@ __all__ = [
     "GELU",
     "MultiHeadAttention",
     "TransformerBlock",
+    # Modern attention mechanisms
+    "DifferentialAttention",
+    "DifferentialTransformer",
+    "GroupedQueryAttention",
+    "MultiQueryAttention",
+    # Gradient checkpointing
+    "checkpoint",
+    "checkpoint_sequential",
+    "get_checkpoint_manager",
+    # Visualization
+    "ModelVisualizer",
+    "plot_model_architecture",
+    "plot_computational_graph",
+    "TrainingVisualizer",
+    "plot_training_curves",
+    "plot_loss_history",
+    "FeatureVisualizer",
+    "plot_feature_maps",
+    "plot_activations",
+    "visualize_attention_weights",
+    "PerformanceVisualizer",
+    "plot_benchmark_results",
+    "InteractiveVisualizer",
+    "create_streamlit_dashboard",
     # Optimizers
     "Adam",
     "SGD",
@@ -171,22 +238,17 @@ if _optimization_config_available:
 
 # Enterprise components (optional imports for advanced users)
 try:
-    from .distributed.distributed_system import DistributedTrainingOrchestrator
     from .backends.cuda_kernels_optimized import OptimizedCUDAKernels
     from .core.autograd import GradientTape
     from .core.memory_manager import AdvancedMemoryManager
     from .monitoring.observability import MetricsCollector, DistributedTracer
     from .optimization.advanced_optimizers import SophiaOptimizer, LionOptimizer
-    from .reliability.fault_tolerance import ElasticTrainingManager, CircuitBreaker, SelfHealingSystem
-    from .benchmarks.comprehensive_benchmark import BenchmarkRunner, PerformanceProfiler, StatisticalAnalyzer
     
     # Enterprise components available
     _enterprise_available = True
     
     # Add to public API
     __all__.extend([
-        # Distributed Training
-        "DistributedTrainingOrchestrator",
         # CUDA Optimization
         "OptimizedCUDAKernels",
         # Advanced Autograd
@@ -199,14 +261,6 @@ try:
         # Advanced Optimizers
         "SophiaOptimizer",
         "LionOptimizer",
-        # Fault Tolerance
-        "ElasticTrainingManager",
-        "CircuitBreaker", 
-        "SelfHealingSystem",
-        # Benchmarking
-        "BenchmarkRunner",
-        "PerformanceProfiler",
-        "StatisticalAnalyzer",
     ])
     
 except ImportError as e:
@@ -264,14 +318,11 @@ def list_enterprise_components():
         return {}
     
     return {
-        "distributed": ["DistributedTrainingOrchestrator"],
         "cuda_optimization": ["OptimizedCUDAKernels"],
         "advanced_autograd": ["GradientTape"],
         "memory_management": ["AdvancedMemoryManager"],
         "monitoring": ["MetricsCollector", "DistributedTracer"],
         "advanced_optimizers": ["SophiaOptimizer", "LionOptimizer"],
-        "fault_tolerance": ["ElasticTrainingManager", "CircuitBreaker", "SelfHealingSystem"],
-        "benchmarking": ["BenchmarkRunner", "PerformanceProfiler", "StatisticalAnalyzer"],
     }
 
 

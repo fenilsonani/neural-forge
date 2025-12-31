@@ -3,15 +3,11 @@
 This module provides tools for visualizing performance benchmarks,
 backend comparisons, memory usage, and computational efficiency.
 """
+from __future__ import annotations
 
-import os
-import sys
 import time
 from typing import Dict, List, Optional, Tuple, Any, Union
 import numpy as np
-
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 try:
     import matplotlib.pyplot as plt
@@ -40,7 +36,7 @@ except ImportError:
     PSUTIL_AVAILABLE = False
     psutil = None
 
-from neural_arch.backends import available_backends, get_backend
+from ..backends import available_backends, get_backend
 
 
 class PerformanceVisualizer:

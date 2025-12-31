@@ -4,8 +4,6 @@ This module provides utility functions for model compression analysis,
 export/import, and performance measurement.
 """
 
-import os
-import sys
 import time
 import json
 import pickle
@@ -15,11 +13,8 @@ from pathlib import Path
 
 import numpy as np
 
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
-
-from neural_arch.core.tensor import Tensor
-from neural_arch.nn.module import Module
+from ..core import Tensor
+from ..nn import Module
 
 logger = logging.getLogger(__name__)
 

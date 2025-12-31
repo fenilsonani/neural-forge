@@ -3,15 +3,11 @@
 This module provides interactive visualization components including
 Streamlit dashboards, Jupyter widgets, and real-time model exploration tools.
 """
+from __future__ import annotations
 
-import os
-import sys
 from typing import Dict, List, Optional, Tuple, Any, Union, Callable
 import numpy as np
 from pathlib import Path
-
-# Add src to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 try:
     import streamlit as st
@@ -44,8 +40,8 @@ except ImportError:
     MATPLOTLIB_AVAILABLE = False
     plt = None
 
-from neural_arch.nn import Module
-from neural_arch.backends import available_backends, get_backend
+from ..nn import Module
+from ..backends import available_backends, get_backend
 from .architecture import ModelVisualizer
 from .training import TrainingVisualizer
 from .features import FeatureVisualizer

@@ -300,7 +300,7 @@ class AutomaticMixedPrecision:
             self._original_policy = _autocast_policy
             
             try:
-                from ..core.dtype import DType, get_default_dtype, set_default_dtype
+                from ..core import DType, get_default_dtype, set_default_dtype
                 self._original_dtype = get_default_dtype()
                 
                 # Set to FP16 for forward pass
@@ -320,7 +320,7 @@ class AutomaticMixedPrecision:
         if self.enabled and self._original_dtype is not None:
             # Restore original state
             try:
-                from ..core.dtype import set_default_dtype
+                from ..core import set_default_dtype
                 set_default_dtype(self._original_dtype)
             except ImportError:
                 pass  # Fallback gracefully
