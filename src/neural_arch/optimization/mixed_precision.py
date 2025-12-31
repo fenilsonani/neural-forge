@@ -18,8 +18,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, Callable
 
 import numpy as np
 
-from ..core import Module, Parameter
-from ..core.tensor import Tensor
+from ..core import Module, Parameter, Tensor
 from ..exceptions import NumericalError
 
 logger = logging.getLogger(__name__)

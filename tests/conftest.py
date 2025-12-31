@@ -2,6 +2,15 @@
 Pytest configuration for neural architecture tests.
 """
 
+import os
+import sys
+
+# Add src directory to path for all tests
+_root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_src_dir = os.path.join(_root_dir, "src")
+if _src_dir not in sys.path:
+    sys.path.insert(0, _src_dir)
+
 import pytest
 import numpy as np
 

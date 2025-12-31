@@ -96,9 +96,11 @@ class Tensor:
         self._grad_fn = None
         self.name = name
 
-        # Backend compatibility
-        from ..backends.backend import Backend
-        self.backend = Backend.get_backend(self.device.type)
+        # Backend compatibility - map device type to backend name
+        from ..backends import get_backend
+        device_to_backend = {"cpu": "numpy", "cuda": "cuda", "mps": "mps"}
+        backend_name = device_to_backend.get(self.device.type, "numpy")
+        self.backend = get_backend(backend_name)
         self.backend_data = self.data  # For now, just use numpy
 
     def __str__(self):
@@ -123,13 +125,75 @@ class Tensor:
         if self.grad is None:
             self.grad = np.ones_like(self.data)
 
+    # Arithmetic operators
+    def __add__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data + other.data, requires_grad=self.requires_grad or other.requires_grad)
+        return Tensor(self.data + other, requires_grad=self.requires_grad)
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __sub__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data - other.data, requires_grad=self.requires_grad or other.requires_grad)
+        return Tensor(self.data - other, requires_grad=self.requires_grad)
+
+    def __rsub__(self, other):
+        return Tensor(other - self.data, requires_grad=self.requires_grad)
+
+    def __mul__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data * other.data, requires_grad=self.requires_grad or other.requires_grad)
+        return Tensor(self.data * other, requires_grad=self.requires_grad)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __truediv__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data / other.data, requires_grad=self.requires_grad or other.requires_grad)
+        return Tensor(self.data / other, requires_grad=self.requires_grad)
+
+    def __rtruediv__(self, other):
+        return Tensor(other / self.data, requires_grad=self.requires_grad)
+
+    def __matmul__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data @ other.data, requires_grad=self.requires_grad or other.requires_grad)
+        return Tensor(self.data @ other, requires_grad=self.requires_grad)
+
+    def __neg__(self):
+        return Tensor(-self.data, requires_grad=self.requires_grad)
+
+    def __pow__(self, other):
+        if isinstance(other, Tensor):
+            return Tensor(self.data ** other.data, requires_grad=self.requires_grad or other.requires_grad)
+        return Tensor(self.data ** other, requires_grad=self.requires_grad)
+
+    def sum(self, axis=None, keepdims=False):
+        return Tensor(self.data.sum(axis=axis, keepdims=keepdims), requires_grad=self.requires_grad)
+
+    def mean(self, axis=None, keepdims=False):
+        return Tensor(self.data.mean(axis=axis, keepdims=keepdims), requires_grad=self.requires_grad)
+
+    def reshape(self, *shape):
+        return Tensor(self.data.reshape(*shape), requires_grad=self.requires_grad)
+
+    def transpose(self, *axes):
+        return Tensor(self.data.transpose(*axes), requires_grad=self.requires_grad)
+
+    @property
+    def T(self):
+        return Tensor(self.data.T, requires_grad=self.requires_grad)
+
 
 class Parameter(Tensor):
     """Parameter is a special tensor used for model weights."""
 
-    def __init__(self, data, dtype=None, device=None):
+    def __init__(self, data, dtype=None, device=None, name=None):
         """Initialize parameter (always requires gradients)."""
-        super().__init__(data, dtype=dtype, device=device, requires_grad=True)
+        super().__init__(data, dtype=dtype, device=device, requires_grad=True, name=name)
 
 
 class Optimizer:
