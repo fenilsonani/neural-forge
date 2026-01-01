@@ -1,21 +1,51 @@
 """Base module class for neural network components."""
 
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Callable, Dict, Iterator, List, Optional
 
 from ..core import Tensor
 
 
 class Module:
-    """Base class for all neural network modules."""
+    """Base class for all neural network modules.
+
+    Supports gradient checkpointing for memory-efficient training.
+    Enable with `model.gradient_checkpointing_enable()`.
+    """
 
     def __init__(self):
         self._parameters: Dict[str, Tensor] = {}
         self._modules: Dict[str, "Module"] = {}
         self._training = True
+        self._gradient_checkpointing = False
 
     def __call__(self, *args, **kwargs):
         """Make the module callable."""
+        if self._gradient_checkpointing and self._training:
+            return self._checkpointed_forward(*args, **kwargs)
         return self.forward(*args, **kwargs)
+
+    def _checkpointed_forward(self, *args, **kwargs):
+        """Forward pass with gradient checkpointing.
+
+        Override this method in subclasses that need custom checkpointing behavior.
+        By default, uses the checkpoint decorator from optimization module.
+        """
+        from ..optimization import checkpoint, get_checkpoint_manager
+
+        manager = get_checkpoint_manager()
+        was_enabled = manager.enabled
+        manager.enable()
+
+        try:
+            # Wrap forward in checkpoint
+            @checkpoint
+            def _forward(*a, **kw):
+                return self.forward(*a, **kw)
+
+            return _forward(*args, **kwargs)
+        finally:
+            if not was_enabled:
+                manager.disable()
 
     def forward(self, *args, **kwargs):
         """Define the computation performed at every call.
@@ -58,9 +88,40 @@ class Module:
         """Set the module in evaluation mode."""
         return self.train(False)
 
+    @property
+    def is_training(self) -> bool:
+        """Return whether the module is in training mode."""
+        return self._training
+
     def training(self) -> bool:
         """Return whether the module is in training mode."""
         return self._training
+
+    def gradient_checkpointing_enable(self):
+        """Enable gradient checkpointing for memory-efficient training.
+
+        This trades compute for memory by recomputing activations during
+        the backward pass instead of storing them. Typically reduces memory
+        usage by 50-90% with 10-30% slowdown.
+        """
+        self._gradient_checkpointing = True
+        for module in self._modules.values():
+            if hasattr(module, 'gradient_checkpointing_enable'):
+                module.gradient_checkpointing_enable()
+        return self
+
+    def gradient_checkpointing_disable(self):
+        """Disable gradient checkpointing."""
+        self._gradient_checkpointing = False
+        for module in self._modules.values():
+            if hasattr(module, 'gradient_checkpointing_disable'):
+                module.gradient_checkpointing_disable()
+        return self
+
+    @property
+    def is_gradient_checkpointing(self) -> bool:
+        """Return whether gradient checkpointing is enabled."""
+        return self._gradient_checkpointing
 
     def zero_grad(self):
         """Zero out gradients of all parameters."""

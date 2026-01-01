@@ -115,7 +115,10 @@ class GradientCheckpointManager:
         memory_saved = 0
         for output in checkpoint_fn.outputs:
             if isinstance(output, Tensor):
-                memory_saved += output.memory_usage()
+                if hasattr(output, 'memory_usage'):
+                    memory_saved += output.memory_usage()
+                elif hasattr(output, 'data') and hasattr(output.data, 'nbytes'):
+                    memory_saved += output.data.nbytes
 
         self.memory_savings += memory_saved
         logger.debug(f"Added checkpoint, estimated memory saved: {memory_saved / (1024**2):.1f} MB")

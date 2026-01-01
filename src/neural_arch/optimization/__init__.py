@@ -138,3 +138,33 @@ if _GRADIENT_CHECKPOINTING_AVAILABLE:
         "no_checkpoint",
         "force_checkpoint",
     ])
+
+# Import integration utilities
+try:
+    from .integration import (
+        OptimizationConfig,
+        apply_optimizations,
+        apply_operator_fusion,
+        training_context,
+        TrainingContext,
+        TrainingMetrics,
+        tracked_training,
+        estimate_memory_savings as estimate_optimization_savings,
+    )
+    _INTEGRATION_AVAILABLE = True
+except Exception as _e:
+    import logging as _logging
+    _logging.getLogger(__name__).debug(f"Integration import failed: {_e}")
+    _INTEGRATION_AVAILABLE = False
+
+# Add integration exports if available
+if _INTEGRATION_AVAILABLE:
+    __all__.extend([
+        "OptimizationConfig",
+        "apply_optimizations",
+        "apply_operator_fusion",
+        "training_context",
+        "TrainingContext",
+        "TrainingMetrics",
+        "tracked_training",
+    ])

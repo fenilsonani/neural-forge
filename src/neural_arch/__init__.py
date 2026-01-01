@@ -71,6 +71,7 @@ from .nn import (
     Linear,
     MultiHeadAttention,
     ReLU,
+    Sequential,
     Sigmoid,
     Softmax,
     Tanh,
@@ -106,6 +107,20 @@ try:
     _gradient_checkpointing_available = True
 except ImportError:
     _gradient_checkpointing_available = False
+
+# Import optimization integration utilities
+try:
+    from .optimization import (
+        OptimizationConfig,
+        apply_optimizations,
+        training_context,
+        TrainingContext,
+        TrainingMetrics,
+        tracked_training,
+    )
+    _optimization_integration_available = True
+except ImportError:
+    _optimization_integration_available = False
 
 # Import visualization module
 try:
@@ -180,6 +195,7 @@ __all__ = [
     "Embedding",
     "LayerNorm",
     "ReLU",
+    "Sequential",
     "Softmax",
     "Sigmoid",
     "Tanh",
@@ -195,6 +211,13 @@ __all__ = [
     "checkpoint",
     "checkpoint_sequential",
     "get_checkpoint_manager",
+    # Optimization integration
+    "OptimizationConfig",
+    "apply_optimizations",
+    "training_context",
+    "TrainingContext",
+    "TrainingMetrics",
+    "tracked_training",
     # Visualization
     "ModelVisualizer",
     "plot_model_architecture",
