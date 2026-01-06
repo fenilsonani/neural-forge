@@ -122,7 +122,7 @@ jobs:
           
       - name: Upload SAST results to GitHub Security
         if: github.event.inputs.create_sarif != 'false'
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: security-reports/
           category: sast-analysis
@@ -397,7 +397,7 @@ jobs:
           
       - name: Upload secrets scan SARIF
         if: github.event.inputs.create_sarif != 'false'
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: security-reports/gitleaks-results.sarif
           category: secrets-detection
